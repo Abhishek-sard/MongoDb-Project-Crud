@@ -1,42 +1,61 @@
-let express = require("express");
-const cors = require("cors");
+let express=require("express");
 const { dbConnection } = require("./dbConnection");
+let app=express();
 
-let app = express();
 
-app.use(express.json());
-app.use(cors());
+app.use(express.json())
 
-app.get("/student-read", async (req, res) => {
-    let myDB = await dbConnection();
-    let studentCollection = myDB.collection("students");
+app.get("/student-read",async (req,res)=>{
+    let myDB=await dbConnection();
+    res.send("Students view API")
+    let studentCollection=myDB.collection("students")
 
-    let data = await studentCollection.find().toArray();
-    let resobj = {
-        status: 1,
-        msg: "Students List",
-        data
-    };
+    let data=await studentCollection.find().toArray();
+    let resobj={
+        status:1,
+        msg:"Students List",
 
-    res.send(resobj);
-});
+    }
+})
+app.post("/student-insert",async(req,res)=>{
+    let myDB=await dbConnection();
+    let studentCollection=myDB.collection("students")
 
-app.post("/student-insert", async (req, res) => {
-    let myDB = await dbConnection();
-    let studentCollection = myDB.collection("students");
 
-    let { sName, sEmail } = req.body;
-    let obj = { sName, sEmail };
+    // let obj={
+    //     sName:req.body.sName,
+    //     sEmail:req.body.sEmail,
+    // }
+    let{sName, sEmail}=req.body;
+    let obj={sName, sEmail}
+    console.log(obj)
+    
+    let insertRes= await studentCollection.insertOne(obj)
 
-    let insertRes = await studentCollection.insertOne(obj);
-
-    let resobj = {
-        status: 1,
-        msg: "Data inserted",
+    let resObj={
+        status:1,
+        msg:"Data insert",
         insertRes
-    };
+        
+    }
+   
+    res.send(resObj)
+   
+    console.log(Obj)
+    res.send("students Insert API")
+})
 
-    res.send(resobj);
-});
+app.delete("/student-delete/:id",async (req,res)=>{
+    let {id}=req.params;
+    let myDB=await dbConnection();
+    let studentCollection=myDB.collection("students")
+    let delRes=await studentCollection.deleteOne({_id:new Object(id)})
+    let resObj={
+        status:1,
+        msg:"Data Delete",
+        delRes
+    }
+    res.send(resObj)
+})
 
-app.listen(8000, () => console.log("Server running on port 8000"));
+app.listen("8000")
