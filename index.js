@@ -1,5 +1,6 @@
 let express=require("express");
 const { dbConnection } = require("./dbConnection");
+const { ObjectId } = require("mongodb");
 let app=express();
 
 
@@ -56,6 +57,22 @@ app.delete("/student-delete/:id",async (req,res)=>{
         delRes
     }
     res.send(resObj)
+})
+
+app.put("/student-update/:id",async(req,res)=>{
+    let {id}=req.params;
+    let {sName,sEmail}=req.body;
+    let myDB=await dbConnection();
+    let obj={sName,sEmail}
+    let studentCollection=myDB.collection("students")
+    let updateRes=await studentCollection.updateOne({_id:new ObjectId(id)},{$set:{sName,sEmail}})
+    let resObj={
+        status:1,
+        msg:"Data Updated",
+        updateRes
+    }
+    res.send(resObj)
+    
 })
 
 app.listen("8000")
