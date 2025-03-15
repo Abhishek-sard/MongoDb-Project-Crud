@@ -2,3 +2,4 @@
 2. npm i express
 3. npm i mongodb
 
+mongoose: is an framework of mongodb (object data modeling)
